@@ -4,6 +4,12 @@ const app = require('../app');
 
 
 describe('Google Play Apps', () => {
+  it('returns 404 error when routing to incorrect path', () => {
+    return supertest(app)
+      .get('/')
+      .expect(404);
+  });
+
   it('returns full list of apps when no queries are supplied', () => {
     return supertest(app)
       .get('/apps')
