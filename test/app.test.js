@@ -47,13 +47,77 @@ describe('Google Play Apps', () => {
         expect(correctGenre).to.be.true;
       });
   });
-  // it('returns sorted results correctly', () => {
-  //   return supertest(app)
-  //     .get('/apps')
-  //     .query({ sort: 'App' })
-  //     .expect(200)
-  //     .expect('Content-Type', /json/)
-  //     .then(res => {
+  it('returns sorted App results correctly', () => {
+    return supertest(app)
+      .get('/apps')
+      .query({ sort: 'App' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then(res => {
+        let sortedCorrectly = true;
+        let i = 0;
+        while (i < res.body.length -1 ) {
+          if (((res.body)[i]).App.toLowerCase() > ((res.body)[i + 1]).App.toLowerCase()) {
+            sortedCorrectly = false;
+          }
+          i++;
+        }
+        expect(res.body).to.be.an('array');
+        expect(sortedCorrectly).to.be.true;
+      });
+  });
+
+  it('returns sorted Rating results correctly', () => {
+    return supertest(app)
+      .get('/apps')
+      .query({ sort: 'Rating' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then(res => {
+        let sortedCorrectly = true;
+        let i = 0;
+        while (i < res.body.length -1 ) {
+          if (((res.body)[i]).Rating > ((res.body)[i + 1]).Rating) {
+            sortedCorrectly = false;
+          }
+          i++;
+        }
+        
+        expect(res.body).to.be.an('array');
+        expect(sortedCorrectly).to.be.true;
+      });
+  });
+
+  it('returns correctly when both sort and genres are supplied', () => {
+    return supertest(app)
+      .get('/apps')
+      .query({ sort: 'Rating', genres: 'Puzzle'})
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then(res => {
+        let sortedCorrectly = true;
+        let i = 0;
+        while (i < res.body.length -1 ) {
+          if (((res.body)[i]).Rating > ((res.body)[i + 1]).Rating) {
+            sortedCorrectly = false;
+          }
+          i++;
+        }
+
+        let correctGenre = true;
+        res.body.forEach(app => {
+          if (!app.Genres.toLowerCase().includes('puzzle')) {
+            correctGenre = false;
+          }
+        });
+
+        
+        expect(res.body).to.be.an('array');
+        expect(res.body).to.have.lengthOf(2);
+        expect(sortedCorrectly).to.be.true;
+        expect(correctGenre).to.be.true;
+      });
+  });
 
 
 
